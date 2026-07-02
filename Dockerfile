@@ -14,7 +14,7 @@ RUN groupadd --system --gid 10001 cognix \
     && mkdir -p /data \
     && chown cognix:cognix /data
 COPY --from=dependencies --chown=cognix:cognix /app/node_modules ./node_modules
-COPY --chown=cognix:cognix package.json server.js db.js ./
+COPY --chown=cognix:cognix package.json server.js db.js seed.js ./
 COPY --chown=cognix:cognix templates ./templates
 COPY --chown=cognix:cognix static ./static
 USER cognix
