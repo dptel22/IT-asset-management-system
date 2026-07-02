@@ -17,35 +17,11 @@ docker info --format "{{json .Name}}"
 ---
 
 ## Step 2: Auto-Configure the `.env` File
-Do not ask the user for keys. Generate them programmatically.
-1. Read `.env.example`.
-2. Generate a secure, random 64-character hexadecimal `JWT_SECRET`.
-3. Choose a strong random initial `ADMIN_PASSWORD` (minimum 12 characters, including numbers and special characters).
-4. Create a `.env` file from `.env.example` with these values replaced.
-
-*You can run this Node script directly in the terminal to do this step:*
+Do not ask the user for keys. Run the helper script `auto_config.js` in the project root:
 ```bash
-node -e "
-const fs = require('fs');
-const crypto = require('crypto');
-if (!fs.existsSync('.env')) {
-  fs.copyFileSync('.env.example', '.env');
-}
-let content = fs.readFileSync('.env', 'utf8');
-const jwtSecret = crypto.randomBytes(32).toString('hex');
-const adminPassword = 'Admin_' + crypto.randomBytes(6).toString('hex') + '!2026';
-content = content.replace(/JWT_SECRET=.*/, 'JWT_SECRET=' + jwtSecret);
-content = content.replace(/ADMIN_PASSWORD=.*/, 'ADMIN_PASSWORD=' + adminPassword);
-content = content.replace(/COOKIE_SECURE=.*/, 'COOKIE_SECURE=0');
-fs.writeFileSync('.env', content, 'utf8');
-console.log('=== CONFIGURATION COMPLETE ===');
-console.log('ADMIN_USERNAME=admin');
-console.log('ADMIN_PASSWORD=' + adminPassword);
-console.log('JWT_SECRET=' + jwtSecret);
-console.log('==============================');
-"
+node auto_config.js
 ```
-**CRITICAL**: Log the generated `ADMIN_USERNAME` and `ADMIN_PASSWORD` to the user so they know their login credentials!
+**CRITICAL**: Parse the console output to extract the generated `ADMIN_USERNAME` and `ADMIN_PASSWORD` so you can display them to the user at the end.
 
 ---
 
@@ -59,9 +35,13 @@ Ensure the build completes with exit code 0.
 ---
 
 ## Step 4: Verify Container Health
-Wait 5 seconds for the server to bind, then test the healthcheck endpoint:
+Wait 5 seconds for the server to bind, then verify that the server is responding correctly:
 ```bash
+# Using curl (standard shell):
 curl -s http://127.0.0.1:3000/api/health
+
+# Or using Node.js directly (highly compatible across OS/Shells):
+node -e "fetch('http://127.0.0.1:3000/api/health').then(r=>r.json()).then(console.log).catch(console.error)"
 ```
 Verify the output JSON contains `"status":"ok"`.
 
