@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transfer Request</title>
+    <style>
+      :root {
+        --bg-void: #060a14;
+        --bg-surface: #0d1220;
+        --bg-raised: #141b2e;
+        --border: #1e2a45;
+        --border-glow: #2a3d66;
+        --accent-amber: #f4a226;
+        --accent-amber-dim: #7a5113;
+        --accent-ice: #a8c8ff;
+        --accent-ice-dim: #3a5a99;
+        --status-active: #22c55e;
+        --status-warn: #f59e0b;
+        --status-critical: #ef4444;
+        --status-neutral: #64748b;
+        --text-primary: #edf2fb;
+        --text-secondary: #7b8db5;
+        --text-disabled: #3a4a6b;
+        --font-display: "Syne", sans-serif;
+        --font-ui: "DM Sans", sans-serif;
+        --font-data: "JetBrains Mono", monospace;
+        --radius-card: 8px;
+        --radius-input: 6px;
+        --radius-badge: 4px;
+        --radius-modal: 12px;
+      }
+
+      @import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg-void);
+        background-image: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.025) 1px,
+          transparent 1px
+        );
+        background-size: 24px 24px;
+        color: var(--text-primary);
+        font-family: var(--font-ui);
+        min-height: 100vh;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: var(--font-display);
+        margin-bottom: 0.5em;
+      }
+      p {
+        margin-bottom: 1em;
+      }
+      .text-secondary {
+        color: var(--text-secondary);
+      }
+      .text-disabled {
+        color: var(--text-disabled);
+      }
+      .font-data {
+        font-family: var(--font-data);
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 240px;
+        background-color: var(--bg-surface);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+      }
+      .sidebar-header {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 20px;
+        color: var(--text-primary);
+        letter-spacing: -0.5px;
+      }
+      .logo-icon {
+        width: 24px;
+        height: 24px;
+        background-color: var(--accent-amber);
+        border-radius: 4px;
+      }
+      .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 24px;
+      }
+      .nav-section {
+        color: var(--text-disabled);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 0 24px;
+        margin-top: 16px;
+        margin-bottom: 8px;
+        font-family: var(--font-data);
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 24px;
+        gap: 12px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        border-left: 2px solid transparent;
+        transition: all 0.2s ease;
+        font-size: 14px;
+      }
+      .nav-item i[data-lucide] {
+        width: 18px;
+        height: 18px;
+      }
+      .nav-item:hover {
+        background-color: var(--bg-raised);
+        color: var(--text-primary);
+      }
+      .nav-item.active {
+        background-color: var(--bg-raised);
+        color: var(--accent-amber);
+        border-left-color: var(--accent-amber);
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2px 6px;
+        background-color: rgba(244, 162, 38, 0.1);
+        color: var(--accent-amber);
+        border-radius: var(--radius-badge);
+        font-family: var(--font-data);
+        font-size: 10px;
+        font-weight: 600;
+        margin-left: auto;
+      }
+
+      .app-container {
+        display: flex;
+        min-height: 100vh;
+      }
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+      .top-bar {
+        height: 72px;
+        padding: 0 32px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: rgba(6, 10, 20, 0.8);
+        backdrop-filter: blur(8px);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .breadcrumb {
+        font-family: var(--font-display);
+        font-size: 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .content-area {
+        padding: 32px;
+      }
+
+      .card {
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-card);
+        padding: 32px;
+        max-width: 600px;
+      }
+
+      .form-group {
+        margin-bottom: 24px;
+      }
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-family: var(--font-data);
+      }
+      .form-control {
+        width: 100%;
+        background-color: var(--bg-void);
+        border: 1px solid var(--border);
+        color: var(--text-primary);
+        font-family: var(--font-ui);
+        font-size: 15px;
+        padding: 12px 16px;
+        border-radius: var(--radius-input);
+        transition: all 0.2s;
+      }
+      .form-control:focus {
+        outline: none;
+        border-color: var(--border-glow);
+        box-shadow: 0 0 0 3px rgba(168, 200, 255, 0.1);
+      }
+      textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: var(--radius-input);
+        font-family: var(--font-ui);
+        font-weight: 500;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.12s ease;
+        border: none;
+        outline: none;
+      }
+      .btn i[data-lucide] {
+        width: 18px;
+        height: 18px;
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+      .btn-primary {
+        background-color: var(--accent-amber);
+        color: var(--bg-void);
+      }
+      .btn-primary:hover {
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+      }
+
+      .alert {
+        padding: 16px;
+        border-radius: var(--radius-card);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        max-width: 600px;
+      }
+      .alert-success {
+        background-color: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        color: var(--status-active);
+      }
+      .alert-error {
+        background-color: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: var(--status-critical);
+      }
+    </style>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body>
+    <div class="app-container">
+      {% include "partials/sidebar.html" %}
+      <main class="main-content">
+        <header class="top-bar">
+          <div class="breadcrumb" style="font-size: 16px;">
+            <a href="/employee-dashboard" style="color: var(--text-secondary); text-decoration:none; font-size: 16px;">Dashboard</a>
+            <span style="color: var(--text-disabled); margin: 0 8px;">/</span>
+            Transfer Request
+          </div>
+          <div class="top-bar-actions">
+            <span class="top-bar-date" id="current-date" style="font-family: var(--font-data); color: var(--text-secondary); font-size: 13px;"></span>
+          </div>
+        </header>
+        <div class="content-area">
+          <div class="page-header" style="margin-bottom: 32px;">
+            <h1 class="page-title" style="font-size: 28px; margin-bottom: 8px; letter-spacing: -0.5px;">Transfer Request</h1>
+            <p class="page-subtitle" style="color: var(--text-secondary);">Request to transfer one of your assigned assets to another employee</p>
+          </div>
+
+          {% if success %}
+          <div class="alert alert-success">
+            <i data-lucide="check-circle"></i> Transfer request submitted successfully and is pending approval.
+          </div>
+          {% endif %}
+          
+          {% if error %}
+          <div class="alert alert-error">
+            <i data-lucide="alert-circle"></i> {{ error }}
+          </div>
+          {% endif %}
+
+          <div class="card" style="max-width: 800px; padding: 32px;">
+            <form method="POST" action="/transfer-request">
+              <div style="display: grid; grid-template-columns: 1fr; gap: 24px;">
+                <div>
+                  <label style="display:block; font-size:12px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; font-family:var(--font-data);">Select Asset *</label>
+                  <select name="asset_id" required style="width:100%; background:rgba(13, 18, 32, 0.6); border:1px solid var(--border); color:var(--text-primary); padding:12px 16px; border-radius:var(--radius-input); font-family:var(--font-ui); font-size:14px; outline:none; transition: all 0.2s ease;">
+                    <option value="" disabled selected>-- Choose an asset --</option>
+                    {% for asset in my_assets %}
+                    <option value="{{ asset.id }}">{{ asset.asset_tag }} &mdash; {{ asset.brand }} {{ asset.model }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div>
+                  <label style="display:block; font-size:12px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; font-family:var(--font-data);">Transfer To *</label>
+                  <select name="to_employee_id" required style="width:100%; background:rgba(13, 18, 32, 0.6); border:1px solid var(--border); color:var(--text-primary); padding:12px 16px; border-radius:var(--radius-input); font-family:var(--font-ui); font-size:14px; outline:none; transition: all 0.2s ease;">
+                    <option value="" disabled selected>-- Choose an employee --</option>
+                    {% for emp in all_employees %}
+                    <option value="{{ emp.id }}">{{ emp.name }} ({{ emp.department }})</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div>
+                  <label style="display:block; font-size:12px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; font-family:var(--font-data);">Reason / Notes</label>
+                  <textarea name="notes" placeholder="Why are you requesting this transfer?" style="width:100%; background:rgba(13, 18, 32, 0.6); border:1px solid var(--border); color:var(--text-primary); padding:12px 16px; border-radius:var(--radius-input); font-family:var(--font-ui); font-size:14px; outline:none; transition: all 0.2s ease; resize: vertical; min-height: 100px;"></textarea>
+                </div>
+              </div>
+
+              <div style="display:flex; gap:12px; margin-top:32px; padding-top:24px; border-top:1px solid var(--border); justify-content: flex-end;">
+                <a href="/employee-dashboard" class="btn" style="border: 1px solid var(--border); background: transparent; color: var(--text-primary); text-decoration: none;">Cancel</a>
+                <button type="submit" class="btn btn-primary" style="background-color: var(--accent-amber); color: var(--bg-void);">
+                  <i data-lucide="send" style="width: 16px; height: 16px;"></i> Submit Request
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script>
+      lucide.createIcons();
+      (function() {
+        var el = document.getElementById('current-date');
+        if (el) {
+          var now = new Date();
+          el.textContent = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).toUpperCase();
+        }
+      })();
+    </script>
+  </body>
+</html>

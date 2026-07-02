@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CognixAsset - Archive</title>
+  <style>
+:root { --bg-void:#060A14; --bg-surface:#0D1220; --bg-raised:#141B2E; --border:#1E2A45; --accent-amber:#F4A226; --accent-ice:#A8C8FF; --text-primary:#EDF2FB; --text-secondary:#7B8DB5; --font-ui:Arial, sans-serif; --font-data:monospace; }
+* { box-sizing:border-box; } body { margin:0; background:var(--bg-void); color:var(--text-primary); font-family:var(--font-ui); } .app-container{display:flex;min-height:100vh}.main-content{flex:1;padding:28px}.top-bar{display:flex;justify-content:space-between;margin-bottom:24px}.breadcrumb{color:var(--text-secondary);font-size:13px}.page-title{font-size:32px;margin:0 0 6px}.page-subtitle{color:var(--text-secondary);margin:0 0 24px}.card{background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}table{width:100%;border-collapse:collapse}th,td{padding:14px 18px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}th{background:var(--bg-raised);color:var(--text-secondary);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.tag{font-family:var(--font-data);color:var(--accent-amber)}.muted{color:var(--text-secondary)}
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    {% include "partials/sidebar.html" %}
+    <main class="main-content">
+      <header class="top-bar"><div class="breadcrumb">System / Archive</div></header>
+      <h1 class="page-title">Archived Assets</h1>
+      <p class="page-subtitle">Assets removed from active inventory.</p>
+      <div class="card">
+        <table>
+          <thead><tr><th>Asset</th><th>Serial</th><th>Category</th><th>Archived By</th><th>Date</th><th>Reason</th></tr></thead>
+          <tbody>
+            {% for a in archived_assets %}
+            <tr>
+              <td><div class="tag">{{ a.asset_tag }}</div><div>{{ a.brand }} {{ a.model }}</div></td>
+              <td>{{ a.serial_number }}</td>
+              <td>{{ a.category }}</td>
+              <td>{{ a.archived_by_name or '—' }}</td>
+              <td>{{ a.archived_at | datestr }}</td>
+              <td class="muted">{{ a.reason or '—' }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="muted" style="text-align:center;padding:32px;">No archived assets yet</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  <script src="https://unpkg.com/lucide@latest"></script><script>if(window.lucide) lucide.createIcons();</script>
+</body>
+</html>
